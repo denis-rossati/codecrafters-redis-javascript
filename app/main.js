@@ -1,14 +1,29 @@
 const net = require('net');
 
-const server = net.createServer((connection) => {
-	connection.on('data', (data) => {
+function parseEcho(message) {
+	return message.replace(/^ECHO\s+"/i, '').replace(/"$/, '');
+}
+
+
+function parseOperator() {
+
+}
+
+function parseMessage(message, position = 0) {
+	return message;
+}
+
+
+const server = net.createServer((socket) => {
+	socket.on('data', (data) => {
 		if (data !== undefined) {
-			connection.write(`+${data}\r\n`);
+			socket.write(parseMessage(data.toString()));
 		} else {
-			connection.write(`+PONG\r\n`);
+			socket.write('+PONG\r\n')
 		}
-		connection.end();
-	})
+
+		socket.end();
+	});
 });
 
-server.listen(6379, "127.0.0.1");
+server.listen(6379, '127.0.0.1', undefined);
