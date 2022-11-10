@@ -1,6 +1,6 @@
 const net = require('net');
 
-
+/*
 function parseString(message) {
 
 }
@@ -67,7 +67,7 @@ function parseValue(message) {
 function parseMessage(message) {
 	return parseValue(message);
 }
-
+*/
 
 const server = net.createServer((socket) => {
 	socket.on('data', (data) => {
