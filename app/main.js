@@ -74,7 +74,6 @@ const server = net.createServer((socket) => {
 		if (data !== undefined) {
 			socket.write('+PONG\r\n');
 		}
-		socket.end();
 	});
 });
 
