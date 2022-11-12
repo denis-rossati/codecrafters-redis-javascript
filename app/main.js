@@ -140,4 +140,4 @@ const server = net.createServer((socket) => {
 
 server.listen(6379, '127.0.0.1');
 
-//parseMessage('*2\\r\\n$4\\r\\necho\\r\\n$5\\r\\nworld\n', {write: (message) => console.log(message)});
+// parseMessage('*2\\r\\n$4\\r\\necho\\r\\n$5\\r\\nworld', {write: (message) => console.log(message)});
