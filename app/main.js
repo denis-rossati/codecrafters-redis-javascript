@@ -63,18 +63,49 @@ function parseValue(message) {
 	const operator = message[0];
 	return operators[operator](message);
 }
+*/
+
+function getCommand(message) {
+	const firstBulkString = message.match(/.+\s\n.+\s\n.+/)[0];
+	return firstBulkString.match(/\w+$/);
+}
+
+function hasCommandStatement(message) {
+	try {
+		getCommand(message);
+		return true;
+	} catch (e) {
+		return false;
+	}
+}
+
+function fetchEcho() {
+	// TO-DO: Implement echo command.
+}
+
 
 function parseMessage(message) {
-	return parseValue(message);
+	let command;
+	if (hasCommandStatement(message)) {
+		command = getCommand(message).toLocaleLowerCase();
+	} else {
+		command = 'ping';
+	}
+
+	const commands = {
+		'echo': fetchEcho,
+		'ping': (_message) => '+PONG\r\n',
+	};
+
+
+	return commands[command](message);
 }
-*/
+
 
 const server = net.createServer((socket) => {
 	socket.on('data', (data) => {
-		if (data.toString().includes('ping')) {
-			socket.write('+PONG\r\n');
-		} else {
-			socket.write(data);
+		if (data !== undefined) {
+			socket.write(parseMessage(data.toString()));
 		}
 	});
 });
