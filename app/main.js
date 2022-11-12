@@ -48,10 +48,9 @@ function parseBulkStrings(message, socket, commands) {
 			commands[command](message, socket, commands);
 		}
 
-		parsedMessage = `${strContent}\r\n`;
 	}
 
-	return parseValue(parsedMessage, socket, message);
+	return parseValue(message, socket, commands);
 }
 
 function parseArray(message, socket, commands) {
