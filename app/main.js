@@ -1,14 +1,14 @@
 const net = require('net');
 
 function parseString(message, socket, commands) {
-	message = message.replace(/^+/, '');
+	message = message.replace(/^\+/, '');
 
 	let strContent = message.match(/^\w+/)[0];
 	message = message.replace(/^\w+/, '');
 
 	const command = Object.keys(commands).find((command) => strContent.toLowerCase().trim().startsWith(command));
 	if (command) {
-		commands[command](message, socket, commands);
+		message = commands[command](message, socket, commands);
 	} else {
 		socket.write(strContent);
 	}
@@ -72,7 +72,10 @@ function parseLineBreak(message) {
 }
 
 function handleEcho(message, socket) {
-
+	message = parseLineBreak(message.replace(/^echo/, ''));
+	socket.write(message.match(/^\w/)[0]);
+	message = message.replace(/^\w/, '')
+	return message;
 }
 
 function handlePing(message, socket) {
