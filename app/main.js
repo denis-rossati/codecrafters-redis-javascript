@@ -135,4 +135,4 @@ const server = net.createServer((socket) => {
 
 server.listen(6379, '127.0.0.1');
 
-parseMessage('*1\r\n$4\r\nping\r\n', {write: (message) => console.log(message)});
+// parseMessage('*1\r\n$4\r\nping\r\n', {write: (message) => console.log(message)});
