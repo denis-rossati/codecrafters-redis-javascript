@@ -72,7 +72,7 @@ function parseLineBreak(message) {
 }
 
 function handleEcho(message, socket) {
-	message = parseLineBreak(message.replace(/^echo\s+/, ''));
+	message = parseLineBreak(message.replace(/^echo\s+\$\d/, ''));
 	const strContent = message.match(/^\w+/)[0];
 	socket.write(strContent);
 	message = message.replace(/^\w+/, '')
