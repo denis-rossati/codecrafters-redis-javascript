@@ -86,7 +86,7 @@ function parseMessage(message, socket) {
 const server = net.createServer((socket) => {
 	socket.on('data', (data) => {
 		if (data !== undefined) {
-			if (data.toString().trim() === 'PING') {
+			if (data.toString().toLowerCase().includes('ping')) {
 				socket.write('+PONG\r\n');
 			} else {
 				parseMessage(data.toString(), socket);
