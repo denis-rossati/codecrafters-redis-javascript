@@ -67,7 +67,7 @@ function parseValue(message) {
 
 function getCommand(message) {
 	const firstBulkString = message.match(/.+\s\n.+\s\n.+/)[0];
-	return firstBulkString.match(/\w+$/);
+	return firstBulkString.match(/\w+$/)[0];
 }
 
 function hasCommandStatement(message) {
@@ -87,7 +87,7 @@ function fetchEcho() {
 function parseMessage(message) {
 	let command;
 	if (hasCommandStatement(message)) {
-		command = getCommand(message).toLowerCase();
+		command = getCommand(message).toLocaleLowerCase();
 	} else {
 		command = 'ping';
 	}
