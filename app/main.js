@@ -12,7 +12,7 @@ function parseIntegers() {
 
 }
 
-function parseBulkStrings(message, socket) {
+function parseBulkStrings(message, socket, commands) {
 	let strSize;
 	let parsedMessage = '+';
 
@@ -31,8 +31,10 @@ function parseBulkStrings(message, socket) {
 			throw new Error('Bulk string doesn\'t start with length size digit');
 		}
 
-		if (true) {
+		const command = Object.keys(commands).find((command) => strContent.toLowerCase().trim().startsWith(command));
 
+		if (command) {
+			commands[command](message, socket);
 		}
 
 		parsedMessage = `${strContent}\r\n`;
@@ -43,7 +45,6 @@ function parseBulkStrings(message, socket) {
 
 function parseArray(message, socket) {
 	const arrSize = parseInt(message[1]);
-	const arr = [];
 
 	message = parseLineBreak(message.replace(/^\*\d/, ''));
 
@@ -68,18 +69,9 @@ function parseValue(message, socket) {
 	const commands = {
 		'ping': (_message, socket) => {
 			socket.write('+PONG\r\n');
+			message = message.replace(/^ping/, '')
 		},
 		'echo': handleEcho(message, socket),
-	}
-
-	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().startsWith(command));
-
-	if (command) {
-		commands[command](message, socket);
-
-		if (command === 'ping') {
-			return;
-		}
 	}
 
 	const operators = {
