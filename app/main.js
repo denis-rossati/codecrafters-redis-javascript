@@ -70,6 +70,7 @@ function handlePing(message, socket) {
 }
 
 function parseValue(message, socket, commands) {
+	console.log(`Currently parse: ${JSON.stringify(message)}`)
 	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().startsWith(command));
 	if (command) {
 		commands[command](message, socket, commands);
