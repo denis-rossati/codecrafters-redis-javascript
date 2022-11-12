@@ -72,6 +72,8 @@ function parseMessage(message) {
 const server = net.createServer((socket) => {
 	socket.on('data', (data) => {
 		if (data !== undefined) {
+			socket.write(`+${data}\r\n`);
+		} else {
 			socket.write('+PONG\r\n');
 		}
 	});
