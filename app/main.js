@@ -15,6 +15,7 @@ function parseString(message, socket, commands) {
 		socket.write(strContent);
 	}
 
+	console.log('final message ' + message)
 	return parseValue(message, socket, commands);
 }
 
