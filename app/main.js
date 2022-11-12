@@ -102,13 +102,18 @@ function parseValue(message, socket, commands) {
 	}
 
 	let operator = message[0].toLowerCase();
-	const isUnknownOperator = Object.keys(operators).every((op) => operator !== op);
-	if (isUnknownOperator) {
-		message = `+${message}`;
-		operator = '+';
-	}
 
-	return operators[operator](message, socket, commands);
+	try {
+		return operators[operator](message, socket, commands);
+	} catch(e) {
+		const isUnknownOperator = Object.keys(operators).every((op) => operator !== op);
+		if (isUnknownOperator) {
+			message = `+${message}`;
+			operator = '+';
+		}
+
+		return operators[operator](message, socket, commands);
+	}
 }
 
 function parseMessage(message, socket) {
