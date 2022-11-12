@@ -80,6 +80,8 @@ function parseValue(message, socket, commands) {
 	}
 
 	const operator = message[0];
+	console.log(`message: ${JSON.stringify(message)}`);
+	console.log(`operator: ${JSON.stringify(operator)}`);
 	return operators[operator](message, socket, commands);
 }
 
