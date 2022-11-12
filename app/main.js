@@ -8,7 +8,7 @@ function parseString(message, socket, commands) {
 
 	console.log('CONTENT: ' + strContent);
 
-	const command = Object.keys(commands).find((command) => strContent.toLowerCase().trim().startsWith(command));
+	const command = Object.keys(commands).find((command) => strContent.toLowerCase().trim().split(' ')[0] === command);
 	if (command) {
 		message = commands[command](message, socket, commands);
 	} else {
@@ -16,7 +16,6 @@ function parseString(message, socket, commands) {
 		socket.write(strContent);
 	}
 
-	console.log('final message ' + message)
 	return parseValue(message, socket, commands);
 }
 
@@ -92,7 +91,7 @@ function parseValue(message, socket, commands) {
 
 	message = parseLineBreak(message);
 
-	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().startsWith(command));
+	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().split(' ')[0] === command);
 	if (command) {
 		message = commands[command](message, socket, commands);
 	}
@@ -140,4 +139,4 @@ const server = net.createServer((socket) => {
 
 server.listen(6379, '127.0.0.1');
 
-// parseMessage('*2\\r\\n$4\\r\\necho\\r\\n$5\\r\\nworld', {write: (message) => console.log(message)});
+parseMessage('*2\\r\\n$4\\r\\nECHO\\r\\n$3\\r\\nhey\\r\\n', {write: (message) => console.log(message)});
