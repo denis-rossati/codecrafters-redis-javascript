@@ -85,7 +85,12 @@ function parseValue(message, socket, commands) {
 		'\r\n': parseLineBreak,
 	}
 
-	const operator = message[0].toLowerCase();
+	let operator = message[0].toLowerCase();
+	const isUnknownOperator = Object.keys(operators).every((op) => operator !== op);
+	if (isUnknownOperator) {
+		message = `+${message}`;
+		operator = '+';
+	}
 
 	return operators[operator](message, socket, commands);
 }
