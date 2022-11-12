@@ -66,8 +66,8 @@ function parseValue(message) {
 */
 
 function getCommand(message) {
-	const firstBulkString = message.match(/.+\s\n.+\s\n.+/)[0];
-	return firstBulkString.match(/\w+$/)[0];
+	const firstBulkString = message.match(/^\*\d\\r\\n\$\d\\r\\n\w+/)[0];
+	return firstBulkString.match(/[A-Z]+$/)[0];
 }
 
 function hasCommandStatement(message) {
@@ -79,8 +79,8 @@ function hasCommandStatement(message) {
 	}
 }
 
-function fetchEcho() {
-	// TO-DO: Implement echo command.
+function fetchEcho(message) {
+	// @TO-DO: Implement echo command.
 }
 
 
@@ -97,7 +97,6 @@ function parseMessage(message) {
 		'ping': (_message) => '+PONG\r\n',
 	};
 
-
 	return commands[command](message);
 }
 
@@ -113,3 +112,4 @@ const server = net.createServer((socket) => {
 server.listen(6379, '127.0.0.1');
 
 // parseMessage('"*1\\r\\n$4\\r\\nping\\r\\n');
+// console.log(parseMessage('*2\\r\\n$4\\r\\ECHO\\r\\n$4\\r\\nping\\r\\n'))
