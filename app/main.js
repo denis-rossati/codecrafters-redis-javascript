@@ -1,5 +1,7 @@
 const net = require('net');
 
+let streamMessage = '';
+
 function parseString(message, socket, commands) {
 	message = message.replace(/^\+/, '');
 
@@ -12,6 +14,7 @@ function parseString(message, socket, commands) {
 	if (command) {
 		message = commands[command](message, socket, commands);
 	} else {
+		streamMessage += strContent + ' | ';
 		socket.write(strContent);
 	}
 
@@ -71,12 +74,14 @@ function parseLineBreak(message) {
 
 function handleEcho(message, socket) {
 	message = parseLineBreak(message.replace(/^echo/, ''));
+	streamMessage += message.match(/^\w/)[0] + ' | ';
 	socket.write(message.match(/^\w/)[0]);
 	message = message.replace(/^\w/, '')
 	return message;
 }
 
 function handlePing(message, socket) {
+	streamMessage += '+PONG\r\n | ';
 	socket.write('+PONG\r\n');
 	message = parseLineBreak(message.replace(/^ping/, ''))
 	return message;
@@ -133,5 +138,5 @@ const server = net.createServer((socket) => {
 
 server.listen(6379, '127.0.0.1');
 
-// parseMessage('"*1\\r\\n$4\\r\\nping\\r\\n');
-// parseMessage('*1\r\n$4\r\nping\r\n');
+parseMessage('*1\r\n$4\r\nping\r\n');
+console.log(streamMessage)
