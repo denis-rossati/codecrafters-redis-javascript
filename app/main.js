@@ -101,8 +101,8 @@ function parseValue(message, socket, commands) {
 	}
 
 	let operator = message[0].toLowerCase();
-	console.log(`operator: ${operator}`);
-	const isUnknownOperator = Object.keys(operators).every((op) => operator !== op);
+
+	const isUnknownOperator = Object.keys(operators).every((op) => operator !== op) && message !== '';
 	if (isUnknownOperator) {
 		message = `+${message}`;
 		operator = '+';
