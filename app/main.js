@@ -9,8 +9,6 @@ function parseString(message, socket, commands) {
 	const command = Object.keys(commands).find((command) => strContent.toLowerCase().trim().startsWith(command));
 	if (command) {
 		message = commands[command](message, socket, commands);
-	} else {
-		socket.write(strContent);
 	}
 
 	return parseValue(message, socket, commands);
