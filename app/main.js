@@ -13,7 +13,7 @@ function parseString(message, socket, commands) {
 		message = commands[command](message, socket, commands);
 	} else {
 		console.log(`socket writed: +${strContent}\r\n`);
-		socket.write(`+${strContent}\r\n`);
+		socket.write(strContent);
 	}
 
 	console.log('final message ' + message)
