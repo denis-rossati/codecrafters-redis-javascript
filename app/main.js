@@ -39,7 +39,7 @@ function parseBulkStrings(message, socket, commands) {
 	const strSize = message.match(/^\d+/)[0];
 	message = parseLineBreak(message.replace(/^\d+/, ''));
 
-	let strContent = parseLineBreak(message.match(/^\w+/)[0]);
+	let strContent = message.match(/^\w+/)[0];
 	parseLineBreak(message.replace(/^\w+/, ''));
 
 	if (strContent.length !== parseInt(strSize)) {
@@ -66,6 +66,10 @@ function parseArray(message, socket, commands) {
 function parseLineBreak(message) {
 	if (/^\r\n/.test(message)) {
 		return message.replace(/^\r\n/, '');
+	}
+
+	if (/^\\r\\n/.test(message)) {
+		return message.replace(/^\\r\\n/, '');
 	}
 
 	return message;
@@ -103,9 +107,10 @@ function parseValue(message, socket, commands) {
 		'-': parseErrors,
 		':': parseIntegers,
 		'*': parseArray,
+		'linebreak': parseLineBreak,
 	}
 
-	let operator = message[0].toLowerCase();
+	let operator = message[0].toLowerCase() === '\\' ? 'linebreak' : message[0].toLowerCase();
 
 	const isUnknownOperator = Object.keys(operators).every((op) => operator !== op) && message !== '';
 	if (isUnknownOperator) {
@@ -136,4 +141,4 @@ const server = net.createServer((socket) => {
 
 server.listen(6379, '127.0.0.1');
 
-// parseMessage('echo world', {write: (message) => console.log(message)});
+// parseMessage('*2\\r\\n$4\\r\\necho\\r\\n$5\\r\\nworld', {write: (message) => console.log(message)});
