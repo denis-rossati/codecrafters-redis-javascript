@@ -70,6 +70,11 @@ function handlePing(message, socket) {
 }
 
 function parseValue(message, socket, commands) {
+	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().startsWith(command));
+	if (command) {
+		commands[command](message, socket, commands);
+	}
+
 	const operators = {
 		'+': parseString,
 		'-': parseErrors,
@@ -79,9 +84,8 @@ function parseValue(message, socket, commands) {
 		'\r\n': parseLineBreak,
 	}
 
-	const operator = message[0];
-	console.log(`message: ${JSON.stringify(message)}`);
-	console.log(`operator: ${JSON.stringify(operator)}`);
+	const operator = message[0].toLowerCase();
+
 	return operators[operator](message, socket, commands);
 }
 
@@ -89,6 +93,12 @@ function parseMessage(message, socket) {
 	const commands = {
 		'ping': handlePing,
 		'echo': handleEcho,
+	}
+
+	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().startsWith(command));
+	if (command) {
+		commands[command](message, socket, commands);
+		message = message.replace(new RegExp(`^${command}`), '');
 	}
 
 	return parseValue(message, socket, commands);
