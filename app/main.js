@@ -136,4 +136,4 @@ const server = net.createServer((socket) => {
 
 server.listen(6379, '127.0.0.1');
 
-parseMessage('echo world', {write: (message) => console.log(message)});
+// parseMessage('echo world', {write: (message) => console.log(message)});
