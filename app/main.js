@@ -3,7 +3,6 @@ const net = require('net');
 function parseString(message, socket, commands) {
 	message = message.replace(/^\+/, '');
 
-	console.log('string message:' + message);
 	let strContent = message.match(/^\w+/)[0];
 	message = message.replace(/^\w+/, '');
 
@@ -87,6 +86,10 @@ function handlePing(message, socket) {
 
 function parseValue(message, socket, commands) {
 	console.log(`Currently parse: ${message}`);
+	if (message === '') {
+		return;
+	}
+
 	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().startsWith(command));
 	if (command) {
 		commands[command](message, socket, commands);
