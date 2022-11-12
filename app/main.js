@@ -1,6 +1,5 @@
 const net = require('net');
 
-/*
 function parseString(message) {
 
 }
@@ -13,7 +12,7 @@ function parseIntegers() {
 
 }
 
-function parseBulkStrings(message) {
+function parseBulkStrings(message, socket) {
 	let strSize;
 	let parsedMessage = '+';
 
@@ -32,14 +31,25 @@ function parseBulkStrings(message) {
 			throw new Error('Bulk string doesn\'t start with length size digit');
 		}
 
+		if () {
+
+		}
+
 		parsedMessage = `${strContent}\r\n`;
 	}
 
 	return parsedMessage;
 }
 
-function parseArray() {
+function parseArray(message, socket) {
+	const arrSize = parseInt(message[1]);
+	const arr = [];
 
+	message = parseLineBreak(message.replace(/^\*\d/, ''));
+	console.log(message);
+	for(let index = 0; index < arrSize; index += 1) {
+		parseValue(message, socket);
+	}
 }
 
 function parseLineBreak(message) {
@@ -47,10 +57,14 @@ function parseLineBreak(message) {
 		throw new Error('Parsing line break failed')
 	}
 
-	return message.replace(/^\r\n/, '');
+	return message.replace(/^\\r\\n/, '');
 }
 
-function parseValue(message) {
+function parseValue(message, socket) {
+	const commands = {
+		'ping': () => '',
+	}
+
 	const operators = {
 		'+': parseString,
 		'-': parseErrors,
@@ -61,50 +75,22 @@ function parseValue(message) {
 	}
 
 	const operator = message[0];
-	return operators[operator](message);
-}
-*/
-
-function getCommand(message) {
-	const firstBulkString = message.match(/^\*\d\\r\\n\$\d\\r\\n\w+/)[0];
-	return firstBulkString.match(/[A-Z]+$/)[0];
+	return operators[operator](message, socket, commands);
 }
 
-function hasCommandStatement(message) {
-	try {
-		getCommand(message);
-		return true;
-	} catch (e) {
-		return false;
-	}
-}
-
-function fetchEcho(message) {
-	// @TO-DO: Implement echo command.
-}
-
-
-function parseMessage(message) {
-	let command;
-	if (hasCommandStatement(message)) {
-		command = getCommand(message).toLocaleLowerCase();
-	} else {
-		command = 'ping';
-	}
-
-	const commands = {
-		'echo': fetchEcho,
-		'ping': (_message) => '+PONG\r\n',
-	};
-
-	return commands[command](message);
+function parseMessage(message, socket) {
+	return parseValue(message, socket);
 }
 
 
 const server = net.createServer((socket) => {
 	socket.on('data', (data) => {
 		if (data !== undefined) {
-			socket.write(parseMessage(data.toString()));
+			if (data.toString().trim() === 'PING') {
+				socket.write('+PONG\r\n');
+			} else {
+				parseMessage(data.toString(), socket);
+			}
 		}
 	});
 });
@@ -112,4 +98,4 @@ const server = net.createServer((socket) => {
 server.listen(6379, '127.0.0.1');
 
 // parseMessage('"*1\\r\\n$4\\r\\nping\\r\\n');
-// console.log(parseMessage('*2\\r\\n$4\\r\\ECHO\\r\\n$4\\r\\nping\\r\\n'))
+// console.log(parseMessage('*2\\r\\n$4\\r\\nECHO\\r\\n$3\\r\\nhey\\r\\n'))
