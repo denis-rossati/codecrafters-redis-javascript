@@ -47,7 +47,7 @@ function parseArray(message, socket) {
 
 	message = parseLineBreak(message.replace(/^\*\d/, ''));
 
-	for(let index = 0; index < arrSize; index += 1) {
+	for (let index = 0; index < arrSize; index += 1) {
 		parseValue(message, socket);
 	}
 }
@@ -60,9 +60,20 @@ function parseLineBreak(message) {
 	return message.replace(/^\\r\\n/, '');
 }
 
+function handleEcho(message, socket) {
+
+}
+
 function parseValue(message, socket) {
 	const commands = {
-		'ping': () => '',
+		'ping': (_message, socket) => socket.write('+PONG\r\n'),
+		'echo': handleEcho(message, socket),
+	}
+
+	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().startsWith(command));
+
+	if (command) {
+		commands[command](message, socket);
 	}
 
 	const operators = {
@@ -87,11 +98,7 @@ function parseMessage(message, socket) {
 const server = net.createServer((socket) => {
 	socket.on('data', (data) => {
 		if (data !== undefined) {
-			if (data.toString().toLowerCase().includes('ping')) {
-				socket.write('+PONG\r\n');
-			} else {
-				parseMessage(data.toString(), socket);
-			}
+			parseMessage(data.toString(), socket);
 		}
 	});
 });
