@@ -74,7 +74,7 @@ const server = net.createServer((socket) => {
 		if (data.toString().includes('ping')) {
 			socket.write('+PONG\r\n');
 		} else {
-			socket.write(data.toString());
+			socket.write(data);
 		}
 	});
 });
