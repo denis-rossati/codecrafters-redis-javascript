@@ -25,29 +25,25 @@ function parseIntegers() {
 }
 
 function parseBulkStrings(message, socket, commands) {
-	let strSize;
-	let parsedMessage = '+';
+	message = message.replace(/^\$/, '');
 
-	if (message.startsWith('$')) {
-		message = message.replace(/^\$/, '');
-	} else {
-		throw new Error('Bulk string doesn\'t start with length size indicator');
+	if (!/^\d+/.test(message)) {
+		return;
 	}
-	if (/^\d+\r\n/.test(message)) {
-		strSize = message.match(/^\d+/)[0];
-		message = parseLineBreak(message.replace(/^\d+/, ''));
-		// \r\nFOO\r\n -> FOO
-		let strContent = parseLineBreak(message).match(/^\w+\r\n/)[0].slice(0, -2);
 
-		if (strContent.length !== parseInt(strSize)) {
-			throw new Error('Bulk string doesn\'t start with length size digit');
-		}
+	const strSize = message.match(/^\d+/)[0];
+	message = parseLineBreak(message.replace(/^\d+/, ''));
 
-		const command = Object.keys(commands).find((command) => strContent.toLowerCase().trim().startsWith(command));
-		if (command) {
-			commands[command](message, socket, commands);
-		}
+	let strContent = parseLineBreak(message.match(/^\w+/)[0]);
+	parseLineBreak(message.replace(/^\w+/, ''));
 
+	if (strContent.length !== parseInt(strSize)) {
+		return;
+	}
+
+	const command = Object.keys(commands).find((command) => strContent.toLowerCase().trim().startsWith(command));
+	if (command) {
+		commands[command](message, socket, commands);
 	}
 
 	return parseValue(message, socket, commands);
