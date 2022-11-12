@@ -72,9 +72,10 @@ function parseLineBreak(message) {
 }
 
 function handleEcho(message, socket) {
-	message = parseLineBreak(message.replace(/^echo/, ''));
-	socket.write(message.match(/^\w/)[0]);
-	message = message.replace(/^\w/, '')
+	message = parseLineBreak(message.replace(/^echo\s+/, ''));
+	const strContent = message.match(/^\w+/)[0];
+	socket.write(strContent);
+	message = message.replace(/^\w+/, '')
 	return message;
 }
 
@@ -87,13 +88,13 @@ function handlePing(message, socket) {
 function parseValue(message, socket, commands) {
 	console.log(`Currently parse: ${message}`);
 
-	if (message === '') {
-		return;
-	}
-
 	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().startsWith(command));
 	if (command) {
-		commands[command](message, socket, commands);
+		message = commands[command](message, socket, commands);
+	}
+
+	if (message === '') {
+		return;
 	}
 
 	const operators = {
@@ -121,7 +122,7 @@ function parseMessage(message, socket) {
 		'echo': handleEcho,
 	}
 
-	return parseValue(message, socket, commands);
+	parseValue(message, socket, commands);
 }
 
 
@@ -135,4 +136,4 @@ const server = net.createServer((socket) => {
 
 server.listen(6379, '127.0.0.1');
 
-// parseMessage('*1\r\n$4\r\nping\r\n', {write: (message) => console.log(message)});
+parseMessage('echo world', {write: (message) => console.log(message)});
