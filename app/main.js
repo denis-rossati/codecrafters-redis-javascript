@@ -6,9 +6,13 @@ function parseString(message, socket, commands) {
 	let strContent = message.match(/^\w+/)[0];
 	message = message.replace(/^\w+/, '');
 
+	console.log('CONTENT: ' + strContent);
+
 	const command = Object.keys(commands).find((command) => strContent.toLowerCase().trim().startsWith(command));
 	if (command) {
 		message = commands[command](message, socket, commands);
+	} else {
+		socket.write(strContent);
 	}
 
 	return parseValue(message, socket, commands);
