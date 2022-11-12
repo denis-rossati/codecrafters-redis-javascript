@@ -14,7 +14,6 @@ function parseString(message, socket, commands) {
 	if (command) {
 		message = commands[command](message, socket, commands);
 	} else {
-		streamMessage += strContent + ' | ';
 		socket.write(strContent);
 	}
 
@@ -49,7 +48,7 @@ function parseBulkStrings(message, socket, commands) {
 
 	const command = Object.keys(commands).find((command) => strContent.toLowerCase().trim().startsWith(command));
 	if (command) {
-		commands[command](message, socket, commands);
+		message = commands[command](message, socket, commands);
 	}
 
 	return parseValue(message, socket, commands);
@@ -74,14 +73,12 @@ function parseLineBreak(message) {
 
 function handleEcho(message, socket) {
 	message = parseLineBreak(message.replace(/^echo/, ''));
-	streamMessage += message.match(/^\w/)[0] + ' | ';
 	socket.write(message.match(/^\w/)[0]);
 	message = message.replace(/^\w/, '')
 	return message;
 }
 
 function handlePing(message, socket) {
-	streamMessage += '+PONG\r\n | ';
 	socket.write('+PONG\r\n');
 	message = parseLineBreak(message.replace(/^ping/, ''))
 	return message;
@@ -139,4 +136,3 @@ const server = net.createServer((socket) => {
 server.listen(6379, '127.0.0.1');
 
 parseMessage('*1\r\n$4\r\nping\r\n', {write: (message) => console.log(message)});
-console.log(streamMessage)
