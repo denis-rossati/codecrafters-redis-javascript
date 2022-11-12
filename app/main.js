@@ -53,7 +53,7 @@ function parseArray(message, socket) {
 }
 
 function parseLineBreak(message) {
-	if (/^\r\n/.test(message)) {
+	if (/^\\r\\n/.test(message)) {
 		throw new Error('Parsing line break failed')
 	}
 
