@@ -87,7 +87,7 @@ function fetchEcho() {
 function parseMessage(message) {
 	let command;
 	if (hasCommandStatement(message)) {
-		command = getCommand(message).toLocaleLowerCase();
+		command = getCommand(message).toLowerCase();
 	} else {
 		command = 'ping';
 	}
