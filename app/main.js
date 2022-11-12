@@ -3,7 +3,7 @@ const net = require('net');
 function parseString(message, socket, commands) {
 	message = message.replace(/^\+/, '');
 
-	console.log(message);
+	console.log('string message:' + message);
 	let strContent = message.match(/^\w+/)[0];
 	message = message.replace(/^\w+/, '');
 
