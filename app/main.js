@@ -1,7 +1,7 @@
 const net = require('net');
 
 function parseString(message, socket, commands) {
-	message = message.replace(/^\+/, '');
+	message = parseLineBreak(message.replace(/^\+/, ''));
 
 	console.log(message);
 	let strContent = message.match(/^\w+/)[0];
@@ -91,6 +91,8 @@ function handlePing(message, socket) {
 function parseValue(message, socket, commands) {
 	console.log(`Currently parse: ${message}`);
 
+	message = parseLineBreak(message);
+
 	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().startsWith(command));
 	if (command) {
 		message = commands[command](message, socket, commands);
@@ -106,10 +108,9 @@ function parseValue(message, socket, commands) {
 		'-': parseErrors,
 		':': parseIntegers,
 		'*': parseArray,
-		'linebreak': parseLineBreak,
 	}
 
-	let operator = message[0].toLowerCase() === '\\' ? 'linebreak' : message[0].toLowerCase();
+	let operator = message[0].toLowerCase();
 
 	const isUnknownOperator = Object.keys(operators).every((op) => operator !== op) && message !== '';
 	if (isUnknownOperator) {
