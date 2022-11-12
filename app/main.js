@@ -31,7 +31,7 @@ function parseBulkStrings(message, socket) {
 			throw new Error('Bulk string doesn\'t start with length size digit');
 		}
 
-		if () {
+		if (true) {
 
 		}
 
