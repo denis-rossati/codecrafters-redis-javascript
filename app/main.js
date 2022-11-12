@@ -66,7 +66,9 @@ function handleEcho(message, socket) {
 
 function parseValue(message, socket) {
 	const commands = {
-		'ping': (_message, socket) => socket.write('+PONG\r\n'),
+		'ping': (_message, socket) => {
+			socket.write('+PONG\r\n');
+		},
 		'echo': handleEcho(message, socket),
 	}
 
@@ -74,6 +76,10 @@ function parseValue(message, socket) {
 
 	if (command) {
 		commands[command](message, socket);
+
+		if (command === 'ping') {
+			return;
+		}
 	}
 
 	const operators = {
