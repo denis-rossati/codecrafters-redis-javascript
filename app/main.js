@@ -13,7 +13,7 @@ function parseString(message, socket, commands) {
 		socket.write(strContent);
 	}
 
-	return parseValue(message);
+	return parseValue(message, socket, commands);
 }
 
 function parseErrors() {
@@ -85,20 +85,18 @@ function handlePing(message, socket) {
 }
 
 function parseValue(message, socket, commands) {
-	console.log(`Currently parse: ${JSON.stringify(message)}`)
-	if (JSON.stringify(message) === '\r\n') {
-		return;
-	}
+	message = JSON.stringify(message);
+	console.log(`Currently parse: ${message}`;)
 	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().startsWith(command));
 	if (command) {
 		commands[command](message, socket, commands);
 	}
 
 	const operators = {
+		'$': parseBulkStrings,
 		'+': parseString,
 		'-': parseErrors,
 		':': parseIntegers,
-		'$': parseBulkStrings,
 		'*': parseArray,
 	}
 
