@@ -46,7 +46,7 @@ function parseArray(message, socket) {
 	const arr = [];
 
 	message = parseLineBreak(message.replace(/^\*\d/, ''));
-	console.log(message);
+
 	for(let index = 0; index < arrSize; index += 1) {
 		parseValue(message, socket);
 	}
@@ -75,6 +75,7 @@ function parseValue(message, socket) {
 	}
 
 	const operator = message[0];
+	console.log(message)
 	return operators[operator](message, socket, commands);
 }
 
