@@ -71,7 +71,7 @@ function parseLineBreak(message) {
 }
 
 function handleEcho(message, socket) {
-	message = parseLineBreak(message.replace(/^echo\\r\\n\$\d/, ''));
+	message = parseLineBreak(parseLineBreak(message.replace(/^echo/, '')).replace(/\$\d+/, ''));
 	const strContent = message.match(/^\w+/)[0];
 	socket.write(strContent);
 	message = message.replace(/^\w+/, '')
@@ -137,4 +137,4 @@ const server = net.createServer((socket) => {
 
 server.listen(6379, '127.0.0.1');
 
-// parseMessage('*2\\r\\n$4\\r\\nECHO\\r\\n$3\\r\\nhey\\r\\n', {write: (message) => console.log(message)});
+parseMessage(`*2\r\n$4\r\necho\r\n$5\r\nworld`, {write: (message) => console.log(message)});
