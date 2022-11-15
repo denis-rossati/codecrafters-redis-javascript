@@ -10,7 +10,7 @@ function parseString(message, socket, commands) {
 	if (command) {
 		message = commands[command](message, socket, commands);
 	} else {
-		socket.write(strContent);
+		socket.write(`+${strContent}\r\n`);
 	}
 
 	return parseValue(message, socket, commands);
@@ -75,7 +75,7 @@ function parseLineBreak(message) {
 function handleEcho(message, socket) {
 	message = parseLineBreak(parseLineBreak(message.replace(/^echo/, '')).replace(/\$\d+/, ''));
 	const strContent = message.match(/^\w+/)[0];
-	socket.write(strContent);
+	socket.write(`+${strContent}\r\n`);
 	message = message.replace(/^\w+/, '')
 	return message;
 }
