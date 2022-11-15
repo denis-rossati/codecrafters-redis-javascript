@@ -6,13 +6,10 @@ function parseString(message, socket, commands) {
 	let strContent = message.match(/^\w+/)[0];
 	message = message.replace(/^\w+/, '');
 
-	console.log('CONTENT: ' + strContent);
-
 	const command = Object.keys(commands).find((command) => strContent.toLowerCase().trim().split(' ')[0] === command);
 	if (command) {
 		message = commands[command](message, socket, commands);
 	} else {
-		console.log(`socket writed: +${strContent}\r\n`);
 		socket.write(strContent);
 	}
 
@@ -132,6 +129,7 @@ function parseMessage(message, socket) {
 const server = net.createServer((socket) => {
 	socket.on('data', (data) => {
 		if (data !== undefined) {
+			console.log('message received: ' + data.toString());
 			parseMessage(data.toString(), socket);
 		}
 	});
