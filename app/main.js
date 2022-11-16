@@ -131,7 +131,8 @@ function parseMessage(message, socket) {
 const server = net.createServer((socket) => {
 	socket.on('data', (data) => {
 		if (data !== undefined) {
-			parseMessage(data.toString(), socket);
+			socket.write(data.toString());
+			// parseMessage(data.toString(), socket);
 		}
 	});
 });
