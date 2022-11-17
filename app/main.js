@@ -1,5 +1,7 @@
 const net = require('net');
 
+const map = {};
+
 function parseString(message, socket, commands) {
 	message = parseLineBreak(message.replace(/^\+/, ''));
 
@@ -88,8 +90,6 @@ function handlePing(message, socket) {
 
 function parseValue(message, socket, commands) {
 
-	message = parseLineBreak(message);
-
 	const command = Object.keys(commands).find((command) => message.toLowerCase().trim().split(' ')[0] === command);
 	if (command) {
 		message = commands[command](message, socket, commands);
@@ -118,20 +118,64 @@ function parseValue(message, socket, commands) {
 	return operators[operator](message, socket, commands);
 }
 
+function handleSet(message, socket) {
+	message = parseLineBreak(message.replace(/^set/, ''));
+
+	message = parseLineBreak(message.replace(/^\$\d+/, ''));
+
+	const key = message.match(/^\w+/)[0];
+
+	message = parseLineBreak(message.replace(/^\w+/, ''));
+
+	message = parseLineBreak(message.replace(/^\$\d+/, ''));
+
+	const value = message.match(/^\w+/)[0];
+
+	message = parseLineBreak(message.replace(/^\w+/, ''));
+
+	if(!map[socket.id.toString()]) {
+		map[socket.id.toString()] = {};
+	}
+
+	map[socket.id.toString()][key] = value;
+
+	return message;
+}
+
+function handleGet(message, socket) {
+	message = parseLineBreak(message.replace(/^get/, ''));
+
+	message = parseLineBreak(message.replace(/^\$\d+/, ''));
+
+	const key = message.match(/^\w+/)[0];
+
+	socket.write(`+${map[socket.id.toString()][key]}\r\n`)
+
+	message = parseLineBreak(message.replace(/^\w+/, ''));
+
+	return message;
+}
+
 function parseMessage(message, socket) {
 	const commands = {
 		'ping': handlePing,
 		'echo': handleEcho,
+		'set': handleSet,
+		'get': handleGet,
 	}
 
 	parseValue(message, socket, commands);
 }
 
+let id = 0;
 
 const server = net.createServer((socket) => {
+	socket.id = id;
+	id += 1;
+
 	socket.on('data', (data) => {
 		if (data !== undefined) {
-			console.log(data.toString());
+
 			parseMessage(data.toString(), socket);
 		}
 	});
@@ -139,4 +183,6 @@ const server = net.createServer((socket) => {
 
 server.listen(6379, '127.0.0.1');
 
-// parseMessage(`*2\r\n$4\r\necho\r\n$5\r\nworld`, {write: (message) => console.log(message)});
+parseMessage(`*3\r\n$3\r\nset\r\n$4\r\nheya\r\n$4\r\nheyyyy\r\n$3\r\nget\r\n$4\r\nheya\r\n`, {write: (message) => console.log(message), id: 1});
+
+console.log(map);
