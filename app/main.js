@@ -139,6 +139,8 @@ function handleSet(message, socket) {
 
 	map[socket.id.toString()][key] = value;
 
+	socket.write('+OK\r\n');
+
 	return message;
 }
 
