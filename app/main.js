@@ -168,7 +168,12 @@ function handleGet(message, socket) {
 
 	const key = message.match(/^\w+/)[0];
 
-	socket.write(`+${map[socket.id.toString()][key]}\r\n`)
+	const value = map[socket.id.toString()][key];
+	if (value) {
+		socket.write(`+${value}\r\n`)
+	} else {
+		socket.write(`null`);
+	}
 
 	message = parseLineBreak(message.replace(/^\w+/, ''));
 
