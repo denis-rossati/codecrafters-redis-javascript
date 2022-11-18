@@ -172,7 +172,7 @@ function handleGet(message, socket) {
 	if (value) {
 		socket.write(`+${value}\r\n`)
 	} else {
-		socket.write(`null`);
+		socket.write(`+null\r\n`);
 	}
 
 	message = parseLineBreak(message.replace(/^\w+/, ''));
@@ -199,7 +199,6 @@ const server = net.createServer((socket) => {
 
 	socket.on('data', (data) => {
 		if (data !== undefined) {
-			console.log(data.toString());
 			parseMessage(data.toString(), socket);
 		}
 	});
