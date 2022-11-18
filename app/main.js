@@ -177,7 +177,7 @@ const server = net.createServer((socket) => {
 
 	socket.on('data', (data) => {
 		if (data !== undefined) {
-			console.log(data);
+			console.log(data.toString());
 			parseMessage(data.toString(), socket);
 		}
 	});
