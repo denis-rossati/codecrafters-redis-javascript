@@ -172,7 +172,7 @@ function handleGet(message, socket) {
 	if (value) {
 		socket.write(`+${value}\r\n`)
 	} else {
-		socket.write(`+(nil)\r\n`);
+		socket.write(`*1\r\n$3\r\nnil\r\n`);
 	}
 
 	message = parseLineBreak(message.replace(/^\w+/, ''));
