@@ -202,5 +202,5 @@ const server = net.createServer((socket) => {
 
 server.listen(6379, '127.0.0.1');
 
-parseMessage(`*5\r\n$3\r\nset\r\n$4\r\nheya\r\n$4\r\ndefg\r\n$2\r\npx\r\n$3\r\n100`, {write: (message) => console.log(message), id: 1});
+// parseMessage(`*5\r\n$3\r\nset\r\n$4\r\nheya\r\n$4\r\ndefg\r\n$2\r\npx\r\n$3\r\n100`, {write: (message) => console.log(message), id: 1});
 
