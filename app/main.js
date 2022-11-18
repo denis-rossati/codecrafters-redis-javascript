@@ -139,6 +139,23 @@ function handleSet(message, socket) {
 
 	map[socket.id.toString()][key] = value;
 
+	message = parseLineBreak(message.replace(/^\$\d+/, ''));
+
+	const hasPxArgument = /^px\r\n/.test(message);
+
+	if(hasPxArgument) {
+		message = parseLineBreak(message.replace(/^px/, ''));
+		message = parseLineBreak(message.replace(/^\$\d+/, ''));
+
+		const expiration = parseInt(message.match(/^\d+/));
+
+		message = parseLineBreak(message.replace(/^\d+/, ''));
+
+		setTimeout(() => {
+			delete map[socket.id.toString()][key];
+		}, expiration)
+	}
+
 	socket.write('+OK\r\n');
 
 	return message;
@@ -185,4 +202,5 @@ const server = net.createServer((socket) => {
 
 server.listen(6379, '127.0.0.1');
 
-// parseMessage(`*3\r\n$3\r\nset\r\n$4\r\nheya\r\n$4\r\nheyyyy\r\n$3\r\npx\r\n`, {write: (message) => console.log(message), id: 1});
+parseMessage(`*5\r\n$3\r\nset\r\n$4\r\nheya\r\n$4\r\ndefg\r\n$2\r\npx\r\n$3\r\n100`, {write: (message) => console.log(message), id: 1});
+
